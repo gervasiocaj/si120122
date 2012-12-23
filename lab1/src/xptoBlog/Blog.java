@@ -19,7 +19,7 @@ public class Blog {
 	public void login(String nick, String password) throws Exception {
 		for (Usuario u : database)
 			if (u.getNick().equals(nick))
-				if (u.getSenhaHash().equals(password))
+				if (u.getSenhaHash() == password.hashCode())
 					user = u;
 		if (user == null)
 			throw new Exception("Usuário ou senha incorretos");
