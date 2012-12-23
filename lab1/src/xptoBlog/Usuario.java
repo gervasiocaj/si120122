@@ -1,12 +1,10 @@
 package xptoBlog;
 
-import java.awt.List;
 import java.util.LinkedList;
 
 public class Usuario {
 	
-	private String nome;
-	private String nick;
+	private String nome, nick, senhaHash;
 	private LinkedList<Link> links;
 	
 	public Usuario(String nick) {
@@ -24,6 +22,10 @@ public class Usuario {
 	
 	public String getNick() {
 		return nick;
+	}
+
+	public String getSenhaHash() {
+		return senhaHash;
 	}
 
 }
