@@ -10,5 +10,6 @@
 			<attribute name="owner.project.facets" value="jst.jsf"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="C:/Program Files/eclipse/primefaces-3.4.2/primefaces-3.4.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
