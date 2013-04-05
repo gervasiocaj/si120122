@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head />
+<h:body>
+	<h:form>
+		<p:layout fullPage="true">
+			<p:layoutUnit position="center" header="Spaghetti Stories"
+				style="text-align:center">
+
+				<h:panelGrid columns="2" cellspacing="30" style="text-align:center">
+					<p:commandButton value="Cadastrar Texto" action="cadastro?faces-redirect=true"/>
+					<p:commandButton value="Recombinar Texto" action="textos?faces-redirect=true"/>
+				</h:panelGrid>
+
+				<p:dataTable var="txt" value="#{indexBean.texts}" paginator="true"
+					rows="15" id="textTable" lazy="true"
+					paginatorTemplate="{FirstPageLink} {PreviousPageLink}   Textos: {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+					<p:column headerText="Texto">
+						<h:outputText value="#{txt.title}" />
+					</p:column>
+
+					<p:column headerText="Criador">
+						<h:outputText value="#{txt.criador}" />
+					</p:column>
+
+				</p:dataTable>
+			</p:layoutUnit>
+		</p:layout>
+	</h:form>
+</h:body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head />
+<p:layout fullPage="true">
+	<p:layoutUnit position="center" header="Spaghetti Stories"
+		style="text-align:center">
+
+		<h:form>
+			<p:wizard widgetVar="wiz" flowListener="#{userWizard.onFlowProcess}">
+
+				<p:tab id="textTab" title="Texto">
+					<p:panel header="Escolha seu texto:">
+						<p:dataTable var="txt" value="#{indexBean.texts}" paginator="true"
+							rows="15" id="textTable" selectionMode="single"
+							selection="#{recombiningBean.selectedText}"
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink}   Textos: {CurrentPageReport} {NextPageLink} {LastPageLink}">
+
+							<p:column headerText="Texto">
+								<h:outputText value="#{txt.title}" />
+							</p:column>
+							<p:column headerText="Criador">
+								<h:outputText value="#{txt.criador}" />
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+				</p:tab>
+
+				<p:tab id="editTab" title="Recombinação">
+					<p:panel header="Escolha sua recombinação:">
+						<h:panelGrid columns="2" columnClasses="label, value"
+							styleClass="grid">
+							<h:outputText value="Firstname: *" />
+							<p:inputText required="true" label="Firstname"
+								value="#{userWizard.user.firstname}" />
+						</h:panelGrid>
+					</p:panel>
+				</p:tab>
+
+				<p:tab id="previewTab" title="Confirmação">
+					<p:panel header="Verifique e confirme:">
+						<h:panelGrid columns="2" columnClasses="label, value"
+							styleClass="grid">
+							<h:outputText value="Firstname: *" />
+							<p:inputText required="true" label="Firstname"
+								value="#{userWizard.user.firstname}" />
+						</h:panelGrid>
+					</p:panel>
+				</p:tab>
+
+			</p:wizard>
+		</h:form>
+
+
+		<h:panelGrid cellspacing="30" style="text-align:center">
+			<p:commandButton value="Salvar" id="saveButton" action="index" />
+		</h:panelGrid>
+
+	</p:layoutUnit>
+</p:layout>
+
+
+</html>
