@@ -1,8 +1,12 @@
 package br.edu.ufcg.spaghettistories.webui;
 
 import java.io.Serializable;
+import java.util.Collection;
+
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+
+import br.edu.ufcg.spaghettistories.spaghettistories.SessionController;
 import br.edu.ufcg.spaghettistories.spaghettistories.Text;
 
 @ManagedBean
@@ -20,5 +24,8 @@ public class RecombiningBean implements Serializable{
 	public void setSelectedText(Text selectedText) {
 		this.selectedText = selectedText;
 	}
-
+	
+    public Collection<Text> getTexts() {
+    	return SessionController.getTexts();
+    }
 }

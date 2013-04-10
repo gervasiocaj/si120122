@@ -10,22 +10,25 @@
 	<p:layoutUnit position="center" header="Spaghetti Stories"
 		style="text-align:center">
 
-		<p:panel>
-			<p:outputLabel value="Autor: " />
-			<p:inputText id="autor1" />
-		</p:panel>
+		<h:form>
 
-		<p:panel>
-			<p:outputLabel value="Insira seu texto: " />
-			<p:inputTextarea rows="10" cols="70"
-				id="texto1" />
-		</p:panel>
+			<p:panel>
+				<p:outputLabel value="Autor: " />
+				<p:inputText id="autor" value="#{registerPropertiesBean.autor}" />
+			</p:panel>
 
-		<h:panelGrid columns="2" cellspacing="30" style="text-align:center">
-			<p:commandButton value="Salvar" action="#{registerBean.salvar(texto1,autor1)}" />
-			<p:commandButton value="Cancelar" action="#{registerBean.cancelar()}" />
-		</h:panelGrid>
+			<p:panel>
+				<p:outputLabel value="Insira seu texto: " />
+				<p:inputTextarea rows="10" cols="70" id="texto"
+					value="#{registerPropertiesBean.texto}" />
+			</p:panel>
 
+			<h:panelGrid columns="2" cellspacing="30" style="text-align:center">
+				<p:commandButton value="Salvar" action="#{registerBean.salvar()}" />
+				<p:commandButton value="Cancelar" action="#{registerBean.cancelar()}" />
+			</h:panelGrid>
+
+		</h:form>
 	</p:layoutUnit>
 </p:layout>
 

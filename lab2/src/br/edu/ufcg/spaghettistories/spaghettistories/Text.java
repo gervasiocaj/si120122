@@ -14,12 +14,16 @@ public class Text {
 	private UUID id;
 	
 	public Text(String texto, String criador) {
+		if (criador == null || criador.isEmpty())
+			criador = "Anonymous";
 		this.texto = texto;
 		this.criador = criador;
 		this.id = UUID.randomUUID();
 	}
 
 	public String getTitle() {
+		if (texto.length() < TITLE_SIZE)
+			return texto;
 		return texto.substring(0,TITLE_SIZE);
 	}
 	
