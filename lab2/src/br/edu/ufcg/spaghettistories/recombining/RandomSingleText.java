@@ -43,7 +43,7 @@ public class RandomSingleText implements Recombination {
 	}
 	
 	@Override
-	public String getIncompleteText() {
+	public String getPreviewText() {
 		return Text.joinLines(extra);
 	}
 

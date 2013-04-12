@@ -1,7 +1,7 @@
 package br.edu.ufcg.spaghettistories.webui;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.faces.bean.*;
 import br.edu.ufcg.spaghettistories.spaghettistories.SessionController;
 import br.edu.ufcg.spaghettistories.spaghettistories.Text;
@@ -16,7 +16,7 @@ public class IndexBean implements Serializable {
 		SessionController.init();
 	}
 
-	public Collection<Text> getTexts() {
+	public List<Text> getTexts() {
 		return SessionController.getTexts();
 	}
 

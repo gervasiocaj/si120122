@@ -14,7 +14,7 @@ public class InverseText implements Recombination {
 	public InverseText(Text original) {
 		this.temp = original.splitText();
 		this.extra = new LinkedList<String>();
-		this.position = temp.size();
+		this.position = temp.size() - 1;
 	}
 
 	@Override
@@ -27,7 +27,7 @@ public class InverseText implements Recombination {
 
 	@Override
 	public boolean isDone() {
-		return position == 0;
+		return position < 0;
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class InverseText implements Recombination {
 	}
 	
 	@Override
-	public String getIncompleteText() {
+	public String getPreviewText() {
 		return Text.joinLines(extra);
 	}
 

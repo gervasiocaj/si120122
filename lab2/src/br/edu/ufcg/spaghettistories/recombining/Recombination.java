@@ -8,6 +8,6 @@ public interface Recombination {
 	public boolean isEmpty();
 	public boolean isDone();
 	public Text createText(String criador);
-	public String getIncompleteText();
+	public String getPreviewText();
 
 }

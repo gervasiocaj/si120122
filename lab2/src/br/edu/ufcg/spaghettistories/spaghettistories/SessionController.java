@@ -28,6 +28,10 @@ public class SessionController {
 		sys.addText(new Text(texto, autor));
 	}
 	
+	public static void createText(Text texto) {
+		sys.addText(texto);
+	}
+	
 	public static void recombineText(Recombination r, String autor) {
 		sys.addText(r.createText(autor));
 	}

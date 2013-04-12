@@ -11,7 +11,8 @@
 		style="text-align:center">
 
 		<h:form>
-			<p:wizard widgetVar="wiz" flowListener="#{userWizard.onFlowProcess}">
+			<p:wizard widgetVar="wiz"
+				flowListener="#{recombiningBean.onFlowProcess}">
 
 				<p:tab id="textTab" title="Texto"
 					disabled="#{recombiningBean.textUnselected}">
@@ -33,28 +34,31 @@
 
 				</p:tab>
 
-				<p:tab id="editTab" title="Recombinação"
-					disabled="#{availableRecombinationsBean.recombinationUnselected}">
-
+				<p:tab id="editTab" title="Recombinação">
 					<p:panel header="Escolha sua recombinação:">
-						<p:selectOneMenu
-							value="#{availableRecombinationsBean.selectedRecombination}">
-							<f:selectItems var="rec"
-								value="#{availableRecombinationsBean.recombinations}"
-								itemLabel="#{rec}" />
+						<p:selectOneMenu id="selectorMenu"
+							value="#{recombiningBean.selectedRecombination}">
+							<f:selectItems id="itemSelector" var="rec"
+								value="#{recombiningBean.recombinations}" itemLabel="#{rec}" />
 						</p:selectOneMenu>
 					</p:panel>
-
 				</p:tab>
 
 				<p:tab id="previewTab" title="Confirmação">
-
-					<p:panel header="Verifique e confirme:">
-					
-					
-					
+					<p:panel header="Recombine, verifique e confirme:">
+						<p:panelGrid columns="2">
+							<p:column>
+								<p:outputLabel id="previewText"
+									value="#{recombiningBean.recombinationPreview()}" />
+							</p:column>
+							<p:column>
+								<p:commandButton id="botaoLinha" value="Adicionar Linha"
+									action="#{recombiningBean.addLine}" update="previewText" disabled="#{recombiningBean.isRecombFull()}"/>
+								<p:commandButton value="Salvar"
+									action="#{recombiningBean.saveText}" />
+							</p:column>
+						</p:panelGrid>
 					</p:panel>
-
 				</p:tab>
 
 			</p:wizard>

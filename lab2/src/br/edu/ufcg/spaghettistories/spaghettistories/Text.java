@@ -24,11 +24,12 @@ public class Text {
 	
 	private void fillLine() {
 		List<String> temp = splitText();
-		String temp2 = temp.get(temp.size() - 1);
+		int size = temp.size();
+		String last = temp.get(size - 1);
 		
-		while (temp2.length() < LINE_SIZE) {
-			this.texto.concat(" ");
-			temp2.concat(" ");
+		while (last.length() < LINE_SIZE) {
+			this.texto = this.texto.concat(" .");
+			last = last.concat(".");
 		}
 	}
 
@@ -40,7 +41,7 @@ public class Text {
 			return texto;
 		
 		for (int i = 0; i < TITLE_SIZE; i++)
-			result.concat(temp[i]);
+			result = result.concat(temp[i]).concat(" ");
 		
 		return result;
 	}
@@ -68,7 +69,7 @@ public class Text {
 				line = "";
 				lineSize = 0;
 			}
-			line.concat(word + " ");
+			line = line.concat(word + " ");
 			lineSize++;
 		}
 		
@@ -81,7 +82,7 @@ public class Text {
 	public static String joinLines(List<String> lines) {
 		String result = "";
 		for (String line : lines) {
-			result.concat(line + " ");
+			result = result.concat(line + " ");
 		}
 		return result.trim();
 	}
