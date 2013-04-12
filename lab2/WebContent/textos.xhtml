@@ -13,11 +13,13 @@
 		<h:form>
 			<p:wizard widgetVar="wiz" flowListener="#{userWizard.onFlowProcess}">
 
-				<p:tab id="textTab" title="Texto">
+				<p:tab id="textTab" title="Texto"
+					disabled="#{recombiningBean.textUnselected}">
+
 					<p:panel header="Escolha seu texto:">
-						<p:dataTable var="txt" value="#{indexBean.texts}" paginator="true"
-							rows="15" id="textTable" selectionMode="single"
-							selection="#{recombiningBean.selectedText}"
+						<p:dataTable var="txt" value="#{recombiningBean.texts}"
+							paginator="true" rows="15" id="textTable" selectionMode="single"
+							selection="#{recombiningBean.selectedText}" rowKey="#{txt.id}"
 							paginatorTemplate="{FirstPageLink} {PreviousPageLink}   Textos: {CurrentPageReport} {NextPageLink} {LastPageLink}">
 
 							<p:column headerText="Texto">
@@ -28,40 +30,38 @@
 							</p:column>
 						</p:dataTable>
 					</p:panel>
+
 				</p:tab>
 
-				<p:tab id="editTab" title="Recombinação">
+				<p:tab id="editTab" title="Recombinação"
+					disabled="#{availableRecombinationsBean.recombinationUnselected}">
+
 					<p:panel header="Escolha sua recombinação:">
-						<h:panelGrid columns="2" columnClasses="label, value"
-							styleClass="grid">
-							<h:outputText value="Firstname: *" />
-							<p:inputText required="true" label="Firstname"
-								value="#{userWizard.user.firstname}" />
-						</h:panelGrid>
+						<p:selectOneMenu
+							value="#{availableRecombinationsBean.selectedRecombination}">
+							<f:selectItems var="rec"
+								value="#{availableRecombinationsBean.recombinations}"
+								itemLabel="#{rec}" />
+						</p:selectOneMenu>
 					</p:panel>
+
 				</p:tab>
 
 				<p:tab id="previewTab" title="Confirmação">
+
 					<p:panel header="Verifique e confirme:">
-						<h:panelGrid columns="2" columnClasses="label, value"
-							styleClass="grid">
-							<h:outputText value="Firstname: *" />
-							<p:inputText required="true" label="Firstname"
-								value="#{userWizard.user.firstname}" />
-						</h:panelGrid>
+					
+					
+					
 					</p:panel>
+
 				</p:tab>
 
 			</p:wizard>
+
+
 		</h:form>
-
-
-		<h:panelGrid cellspacing="30" style="text-align:center">
-			<p:commandButton value="Salvar" id="saveButton" action="index" />
-		</h:panelGrid>
-
 	</p:layoutUnit>
 </p:layout>
-
 
 </html>

@@ -14,7 +14,7 @@
 
 				<h:panelGrid columns="2" cellspacing="30" style="text-align:center">
 					<p:commandButton value="Cadastrar Texto" action="cadastro?faces-redirect=true"/>
-					<p:commandButton value="Recombinar Texto" action="textos?faces-redirect=true"/>
+					<p:commandButton value="Recombinar Texto" disabled="#{indexBean.isEmpty()}" action="textos?faces-redirect=true"/>
 				</h:panelGrid>
 
 				<p:dataTable var="txt" value="#{indexBean.texts}" paginator="true"

@@ -1,25 +1,44 @@
 package br.edu.ufcg.spaghettistories.recombining;
 
+import java.util.List;
+import java.util.Random;
+
 import br.edu.ufcg.spaghettistories.spaghettistories.Text;
 
 public class RandomMultipleText implements Recombination {
+	
+	private List<String> temp, extra;
+	private Random random;
+	
+	public RandomMultipleText(Text original) {
+		this.temp = original.splitText();
+		this.random = new Random();
+	}
 
 	@Override
 	public void addLine() {
-		// TODO Auto-generated method stub
-
+		int position = random.nextInt(temp.size());
+		extra.add(temp.get(position));
 	}
 
 	@Override
 	public boolean isDone() {
-		// TODO Auto-generated method stub
-		return false;
+		return false; // Não há limitação de tamanho nesta recombinação 
 	}
 
 	@Override
 	public Text createText(String criador) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Text(Text.joinLines(extra), criador);
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return extra.isEmpty();
+	}
+	
+	@Override
+	public String getIncompleteText() {
+		return Text.joinLines(extra);
 	}
 
 }

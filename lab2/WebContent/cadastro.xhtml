@@ -14,18 +14,18 @@
 
 			<p:panel>
 				<p:outputLabel value="Autor: " />
-				<p:inputText id="autor" value="#{registerPropertiesBean.autor}" />
+				<p:inputText id="autor" value="#{registerBean.autor}" />
 			</p:panel>
 
 			<p:panel>
 				<p:outputLabel value="Insira seu texto: " />
 				<p:inputTextarea rows="10" cols="70" id="texto"
-					value="#{registerPropertiesBean.texto}" />
+					value="#{registerBean.texto}" required="true"/>
 			</p:panel>
 
 			<h:panelGrid columns="2" cellspacing="30" style="text-align:center">
-				<p:commandButton value="Salvar" action="#{registerBean.salvar()}" />
-				<p:commandButton value="Cancelar" action="#{registerBean.cancelar()}" />
+				<p:commandButton value="Salvar" ajax="false" action="#{registerBean.salvar}"/>
+				<p:commandButton value="Cancelar" ajax="false" action="#{registerBean.cancelar}" />
 			</h:panelGrid>
 
 		</h:form>

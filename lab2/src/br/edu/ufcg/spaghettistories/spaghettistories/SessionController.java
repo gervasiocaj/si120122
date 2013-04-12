@@ -1,6 +1,8 @@
 package br.edu.ufcg.spaghettistories.spaghettistories;
 
-import java.util.Collection;
+import java.util.Stack;
+
+import br.edu.ufcg.spaghettistories.recombining.Recombination;
 
 public class SessionController {
 
@@ -18,12 +20,16 @@ public class SessionController {
 		}
 	}
 
-	public static Collection<Text> getTexts() {
+	public static Stack<Text> getTexts() {
 		return sys.getTexts();
 	}
 
 	public static void createText(String texto, String autor) {
 		sys.addText(new Text(texto, autor));
+	}
+	
+	public static void recombineText(Recombination r, String autor) {
+		sys.addText(r.createText(autor));
 	}
 
 }

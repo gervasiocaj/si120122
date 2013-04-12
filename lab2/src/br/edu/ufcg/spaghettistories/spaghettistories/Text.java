@@ -17,14 +17,32 @@ public class Text {
 		if (criador == null || criador.isEmpty())
 			criador = "Anonymous";
 		this.texto = texto;
-		this.criador = criador;
+		this.fillLine();
 		this.id = UUID.randomUUID();
+		this.criador = criador;
+	}
+	
+	private void fillLine() {
+		List<String> temp = splitText();
+		String temp2 = temp.get(temp.size() - 1);
+		
+		while (temp2.length() < LINE_SIZE) {
+			this.texto.concat(" ");
+			temp2.concat(" ");
+		}
 	}
 
 	public String getTitle() {
-		if (texto.length() < TITLE_SIZE)
+		String[] temp = texto.split(" ");
+		String result = "";
+		
+		if (temp.length <= TITLE_SIZE)
 			return texto;
-		return texto.substring(0,TITLE_SIZE);
+		
+		for (int i = 0; i < TITLE_SIZE; i++)
+			result.concat(temp[i]);
+		
+		return result;
 	}
 	
 	public UUID getId() {

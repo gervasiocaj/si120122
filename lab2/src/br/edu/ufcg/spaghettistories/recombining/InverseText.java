@@ -1,23 +1,26 @@
 package br.edu.ufcg.spaghettistories.recombining;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import br.edu.ufcg.spaghettistories.spaghettistories.Text;
 
 public class InverseText implements Recombination {
 
-	private Text original;
 	private List<String> temp, extra;
 	private int position;
 
 	public InverseText(Text original) {
-		this.original = original;
 		this.temp = original.splitText();
+		this.extra = new LinkedList<String>();
 		this.position = temp.size();
 	}
 
 	@Override
 	public void addLine() {
+		if (isDone())
+			throw new NoSuchElementException();
 		extra.add(0, temp.get(position));
 		position--;
 	}
@@ -29,8 +32,17 @@ public class InverseText implements Recombination {
 
 	@Override
 	public Text createText(String criador) {
-		return new Text(original.getTexto() + " " + Text.joinLines(extra),
-				criador);
+		return new Text(Text.joinLines(extra), criador);
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return extra.isEmpty();
+	}
+	
+	@Override
+	public String getIncompleteText() {
+		return Text.joinLines(extra);
 	}
 
 }
