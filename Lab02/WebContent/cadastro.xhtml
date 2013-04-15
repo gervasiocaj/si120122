@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head />
+<p:layout fullPage="true">
+	<p:layoutUnit position="center" header="Spaghetti Stories"
+		style="text-align:center">
+
+		<h:form>
+
+			<p:panel>
+				<p:outputLabel value="Autor: " />
+				<p:inputText id="autor" value="#{registerBean.autor}" />
+			</p:panel>
+
+			<p:panel>
+				<p:outputLabel value="Insira seu texto: " />
+				<p:inputTextarea rows="10" cols="70" id="texto"
+					value="#{registerBean.texto}" required="true"/>
+			</p:panel>
+
+			<h:panelGrid columns="2" cellspacing="30" style="text-align:center">
+				<p:commandButton value="Salvar" ajax="false" action="#{registerBean.salvar}"/>
+				<p:commandButton value="Cancelar" ajax="false" action="#{registerBean.cancelar}" />
+			</h:panelGrid>
+
+		</h:form>
+	</p:layoutUnit>
+</p:layout>
+
+</html>
