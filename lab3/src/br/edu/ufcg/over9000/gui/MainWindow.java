@@ -8,18 +8,24 @@ import java.awt.EventQueue;
 import java.awt.Panel;
 import java.awt.event.*;
 import java.util.concurrent.Executors;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.RowSpec;
 
 public class MainWindow {
 
 	private JFrame mainFrame, dirFrame;
 	private FilesScraper fs;
-	private Panel choicePanel, poolPanel, resultsPanel, finalPanel;
+	private Panel choicePanel, resultsPanel;
 	private JLabel labelChosenDir, labelPoolSize;
 	private JFileChooser dirChooser;
 	private JButton chooseDir;
 	private JSpinner spinner;
 	private JButton analizeButton;
 	private JLabel fileStatus;
+	private JScrollPane scrollPane;
+	private JList<String> wordList;
 
 	/**
 	 * Launch the application.
@@ -57,31 +63,57 @@ public class MainWindow {
 		// -----------------------------------------------------
 
 		choicePanel = new Panel();
+		choicePanel.setLayout(new FormLayout(new ColumnSpec[] {
+				FormFactory.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("448px"),
+				ColumnSpec.decode("157px"), }, new RowSpec[] {
+				FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC, RowSpec.decode("23px"),
+				FormFactory.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("max(17dlu;default)"),
+				FormFactory.RELATED_GAP_ROWSPEC, }));
 		labelChosenDir = new JLabel("Diretório escolhido:" + (" - "));
-		chooseDir = new JButton("Escolher diretório...");
 
-		choicePanel.add(labelChosenDir);
-		choicePanel.add(chooseDir);
+		choicePanel.add(labelChosenDir, "2, 2, left, center");
+
 		mainFrame.getContentPane().add(choicePanel, BorderLayout.NORTH);
+		chooseDir = new JButton("Escolher diretório...");
+		choicePanel.add(chooseDir, "3, 2, left, top");
 
-		// -----------------------------------------------------
+		chooseDir.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dirFrame.setVisible(true);
+			}
+		});
 
-		poolPanel = new Panel();
-		labelPoolSize = new JLabel("Quantidade de threads a usar (escolha 0 para indefinidas threads): ");
+		labelPoolSize = new JLabel(
+				"Quantidade de threads a usar (escolha 0 para indefinidas threads): ");
+		choicePanel.add(labelPoolSize, "2, 4, left, center");
 		spinner = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
-
-		poolPanel.add(labelPoolSize);
-		poolPanel.add(spinner);
-		mainFrame.getContentPane().add(poolPanel, BorderLayout.WEST);
+		choicePanel.add(spinner, "3, 4");
+		analizeButton = new JButton("Analisar");
+		choicePanel.add(analizeButton, "3, 6");
+		analizeButton.setEnabled(fs.hasDir());
 
 		// -----------------------------------------------------
 
-		finalPanel = new Panel();
-		analizeButton = new JButton("Analisar");
-		analizeButton.setEnabled(fs.hasDir());
-		
-		finalPanel.add(analizeButton);
-		mainFrame.getContentPane().add(finalPanel, BorderLayout.EAST);
+		analizeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				fs.setThreadAmount((int) spinner.getValue());
+				analizeOnThread();
+				while (true) {
+					analizeButton.setEnabled(fs.hasFinished());
+					fileStatus.setText(fs.getThreadsFinishedAmount() + " de "
+							+ fs.getFileAmount() + " arquivos");
+					// TODO dar update nas qtds de palavras
+					if (fs.hasFinished())
+						break;
+				}
+
+			}
+
+		});
 
 		// -----------------------------------------------------
 
@@ -94,16 +126,19 @@ public class MainWindow {
 
 		// -----------------------------------------------------
 
+		scrollPane = new JScrollPane();
+		wordList = new JList<String>();
+		
+		scrollPane.setViewportView(wordList);
+		
+		mainFrame.getContentPane().add(scrollPane, BorderLayout.CENTER);
+		
+
+		// -----------------------------------------------------
+
 		dirFrame = new JFrame();
 		dirFrame.setResizable(false);
 		dirFrame.setBounds(100, 100, 640, 480);
-
-		chooseDir.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dirFrame.setVisible(true);
-			}
-		});
 
 		dirChooser = new JFileChooser();
 		dirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -123,26 +158,7 @@ public class MainWindow {
 				}
 			}
 		});
-		
-		// -----------------------------------------------------
-		
-		analizeButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				fs.setThreadAmount((int) spinner.getValue());
-				analizeOnThread();
-				while (true) {
-					analizeButton.setEnabled(fs.hasFinished());
-					fileStatus.setText(fs.getThreadsFinishedAmount() + " de " + fs.getFileAmount() + " arquivos");
-					// TODO dar update nas qtds de palavras
-					if (fs.hasFinished())
-						break;
-				}
-				
-			}
 
-		});
-		
 	}
 
 	protected void setDir() {
