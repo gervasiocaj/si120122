@@ -25,6 +25,14 @@ public class FileExplorer implements Iterator<File> {
 				explore(f);
 		}
 	}
+	
+	public int getFileAmount() {
+		return files.size();
+	}
+	
+	public int getCurrentFileNumber() {
+		return position + 1;
+	}
 
 	@Override
 	public synchronized boolean hasNext() {

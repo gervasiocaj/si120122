@@ -24,17 +24,20 @@ public class WordScrap implements Runnable {
 	@Override
 	public void run() {
 		try {
-			while (reader.ready()) {
-				for (String word : reader.readLine().split(" ")) {
+			while (reader.ready()) 
+				for (String word : reader.readLine().split(" ")) 
 					if (Constants.RESERVED_WORDS.contains(word))
 						synchronized (wordMap) {
 							wordMap.put(word, wordMap.get(word)+1);
 						}
-				}
-			}
-			reader.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
