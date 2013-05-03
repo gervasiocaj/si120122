@@ -21,14 +21,14 @@ public class FilesScraper {
 		resetarMapa(mapaPalavras);
 	}
 
-	public static void main(String[] args) {
-		new FilesScraper();
-		setDirectory("C:/Users/Junior/git");
-		setThreadAmount(4);
-		run();
-	}
+//	public static void main(String[] args) {
+//		new FilesScraper();
+//		setDirectory("C:/Users/Junior/git");
+//		setThreadAmount(4);
+//		run();
+//	}
 
-	public static void setDirectory(String dir) {
+	public void setDirectory(String dir) {
 		try {
 			single = new FileExplorer(new File(dir));
 			hasDir = true;
@@ -37,7 +37,16 @@ public class FilesScraper {
 		}
 	}
 	
-	public static void setThreadAmount(int quantity) {
+	public void setDirectory(File dir) {
+		try {
+			single = new FileExplorer(dir);
+			hasDir = true;
+		} catch (Exception e) {
+			// TODO tratar diretorio invalido
+		}
+	}
+	
+	public void setThreadAmount(int quantity) {
 		try {
 			pool = (ThreadPoolExecutor) Executors
 					.newFixedThreadPool(quantity);
@@ -48,11 +57,19 @@ public class FilesScraper {
 		}
 	}
 	
-	public static boolean isReady() {
+	public boolean isReady() {
 		return (hasDir && hasThreadAmount);
 	}
 	
-	public static void run() {
+	public boolean hasDir() {
+		return hasDir;
+	}
+	
+	public boolean hasThreadAmount() {
+		return hasThreadAmount;
+	}
+	
+	public void run() {
 		if (!isReady())
 			return;
 		
@@ -72,7 +89,7 @@ public class FilesScraper {
 			System.out.println(w + " " + mapaPalavras.get(w));
 	}
 	
-	protected static void resetarMapa(Map<String, Integer> mapaPalavras) {
+	protected void resetarMapa(Map<String, Integer> mapaPalavras) {
 		for (String word : Constants.RESERVED_WORDS) {
 			mapaPalavras.put(word, 0);
 		}
