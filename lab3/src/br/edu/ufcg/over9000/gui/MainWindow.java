@@ -18,14 +18,12 @@ public class MainWindow {
 	private JFrame mainFrame, dirFrame;
 	private FilesScraper fs;
 	private Panel choicePanel, resultsPanel;
-	private JLabel labelChosenDir, labelPoolSize;
+	private JLabel labelChosenDir, labelPoolSize, fileStatus;
+	private JButton directoryButton, analizeButton;
 	private JFileChooser dirChooser;
-	private JButton chooseDir;
 	private JSpinner spinner;
-	private JButton analizeButton;
-	private JLabel fileStatus;
 	private JScrollPane scrollPane;
-	private JList<String> wordList;
+	private JTextArea textArea;
 
 	/**
 	 * Launch the application.
@@ -76,10 +74,10 @@ public class MainWindow {
 		choicePanel.add(labelChosenDir, "2, 2, left, center");
 
 		mainFrame.getContentPane().add(choicePanel, BorderLayout.NORTH);
-		chooseDir = new JButton("Escolher diretório...");
-		choicePanel.add(chooseDir, "3, 2, left, top");
+		directoryButton = new JButton("Escolher diretório...");
+		choicePanel.add(directoryButton, "3, 2, left, top");
 
-		chooseDir.addActionListener(new ActionListener() {
+		directoryButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dirFrame.setVisible(true);
@@ -93,23 +91,13 @@ public class MainWindow {
 		choicePanel.add(spinner, "3, 4");
 		analizeButton = new JButton("Analisar");
 		choicePanel.add(analizeButton, "3, 6");
-		analizeButton.setEnabled(fs.hasDir());
 
 		// -----------------------------------------------------
 
 		analizeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				fs.setThreadAmount((int) spinner.getValue());
-				analizeOnThread();
-				while (true) {
-					analizeButton.setEnabled(fs.hasFinished());
-					fileStatus.setText(fs.getThreadsFinishedAmount() + " de "
-							+ fs.getFileAmount() + " arquivos");
-					// TODO dar update nas qtds de palavras
-					if (fs.hasFinished())
-						break;
-				}
+				analisisAction();
 
 			}
 
@@ -118,21 +106,17 @@ public class MainWindow {
 		// -----------------------------------------------------
 
 		resultsPanel = new Panel();
-		fileStatus = new JLabel("0 de 0 arquivos");
-		// TODO mostrar contagem de palavras
+		fileStatus = new JLabel(getFooterText());
 
 		resultsPanel.add(fileStatus, BorderLayout.SOUTH);
 		mainFrame.getContentPane().add(resultsPanel, BorderLayout.SOUTH);
 
 		// -----------------------------------------------------
 
-		scrollPane = new JScrollPane();
-		wordList = new JList<String>();
-		
-		scrollPane.setViewportView(wordList);
-		
+		textArea = new JTextArea();
+		scrollPane = new JScrollPane(textArea);
+
 		mainFrame.getContentPane().add(scrollPane, BorderLayout.CENTER);
-		
 
 		// -----------------------------------------------------
 
@@ -151,7 +135,7 @@ public class MainWindow {
 				dirFrame.setVisible(false);
 				switch (arg0.getActionCommand()) {
 				case JFileChooser.APPROVE_SELECTION:
-					setDir();
+					directoryAction();
 					break;
 				default:
 					break;
@@ -161,23 +145,68 @@ public class MainWindow {
 
 	}
 
-	protected void setDir() {
-		fs.setDirectory(dirChooser.getSelectedFile());
-		String newText = "Diretório escolhido: ";
-		newText = newText.concat(fs.hasDir() ? dirChooser.getSelectedFile()
-				.getAbsolutePath() : " - ");
-		labelChosenDir.setText(newText);
-		fileStatus.setText("0 de " + fs.getFileAmount() + " arquivos");
-		analizeButton.setEnabled(fs.hasDir());
-		mainFrame.repaint();
+	protected void directoryAction() {
+		updateFrame();
+		directoryButton.setEnabled(false);
+		
+		scrapeDirsWithThreads();
+		
+		while (!fs.hasFinishedScraping())
+			updateFrame();
+		
+		directoryButton.setEnabled(true);
+	}
+	
+	private void analisisAction() {
+		directoryButton.setEnabled(false);
+		analizeButton.setEnabled(false);
+		
+		fs.setThreadAmount((int) spinner.getValue());
+		analizeWithThreads();
+		while (!fs.hasFinishedCounting())
+			updateFrame();
+		
+		textArea.setText(fs.generateMessage());
+		directoryButton.setEnabled(true);
+		analizeButton.setEnabled(true);
 	}
 
-	private void analizeOnThread() {
+	private void scrapeDirsWithThreads() {
+		Executors.newSingleThreadExecutor().execute(new Runnable() {
+			@Override
+			public void run() {
+				fs.setDirectory(dirChooser.getSelectedFile());
+			}
+		});
+	}
+
+	private void analizeWithThreads() {
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override
 			public void run() {
 				fs.runWordCount();
 			}
 		});
+	}
+
+	private void updateFrame() {
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {}
+		labelChosenDir.setText(getHeaderText());
+		//analizeButton.setEnabled(fs.hasDir());
+		fileStatus.setText(getFooterText());
+		mainFrame.repaint();
+	}
+
+	private String getHeaderText() {
+		return "Diretório escolhido: "
+				+ (fs.hasDir() ? dirChooser.getSelectedFile().getAbsolutePath() : " - ");
+	}
+
+	private String getFooterText() {
+		return fs.getThreadsFinishedAmount() + " de " + fs.getFileAmount()
+				+ " arquivos - " + fs.getTimeSpent()
+				+ " milisegundos para a execução";
 	}
 }

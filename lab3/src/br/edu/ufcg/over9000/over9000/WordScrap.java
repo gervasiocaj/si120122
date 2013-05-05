@@ -30,14 +30,9 @@ public class WordScrap implements Runnable {
 						synchronized (wordMap) {
 							wordMap.put(word, wordMap.get(word)+1);
 						}
+			reader.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				reader.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 	

@@ -9,11 +9,18 @@ public class FileExplorer implements Iterator<File> {
 	private LinkedList<File> files;
 	private int position;
 	private final String DESIRED_EXTENSION = ".java";
+	private final File dir;
+	private boolean finished = false;
 
 	public FileExplorer(File directory) {
 		this.files = new LinkedList<File>();
+		this.dir = directory;
 		this.position = -1;
-		explore(directory);
+		finished = true;
+	}
+	
+	public boolean hasFinished() {
+		return finished;
 	}
 
 	private void explore(File arch) {
@@ -21,15 +28,19 @@ public class FileExplorer implements Iterator<File> {
 			if (arch.getAbsolutePath().endsWith(DESIRED_EXTENSION))
 				files.add(arch);
 		} else {
-			for (File f : arch.listFiles())
-				explore(f);
+			try {
+				for (File f : arch.listFiles())
+					explore(f);
+			} catch (Exception e) {
+				System.err.println("Erro ao acessar a pasta: " + arch.getAbsolutePath());
+			}
 		}
 	}
-	
+
 	public int getFileAmount() {
 		return files.size();
 	}
-	
+
 	public int getCurrentFileNumber() {
 		return position + 1;
 	}
@@ -48,5 +59,9 @@ public class FileExplorer implements Iterator<File> {
 	@Override
 	public void remove() {
 		return;
+	}
+
+	public void start() {
+		explore(dir);
 	}
 }

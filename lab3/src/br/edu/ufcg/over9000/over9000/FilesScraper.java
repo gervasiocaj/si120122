@@ -1,11 +1,7 @@
 package br.edu.ufcg.over9000.over9000;
 
 import java.io.File;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 
 import br.edu.ufcg.over9000.util.Constants;
@@ -15,34 +11,20 @@ import br.edu.ufcg.over9000.util.Constants;
  */
 public class FilesScraper {
 
+	private static final int RESULTADOS_POR_LINHA = 4;
 	private static Iterator<File> single;
 	private static ThreadPoolExecutor pool;
 	private static boolean hasDir = false;
 	private static Map<String, Integer> mapaPalavras;
 	private static List<WordScrap> arquivosLidos;
+	private long tempoInicial, tempoFinal = -1;
+	private int qtd;
 
 	public FilesScraper() {
 		mapaPalavras = new Hashtable<>();
 		arquivosLidos = new LinkedList<WordScrap>();
 		resetarMapa(mapaPalavras);
 		resetarPool();
-	}
-
-	// public static void main(String[] args) {
-	// new FilesScraper();
-	// setDirectory("C:/Users/Junior/git");
-	// setThreadAmount(4);
-	// run();
-	// }
-
-	/**
-	 * Indica o diretório a ser explorado
-	 * 
-	 * @param dir
-	 *            - O diretório em formato de String
-	 */
-	public void setDirectory(String dir) {
-		setDirectory(new File(dir));
 	}
 
 	/**
@@ -54,13 +36,14 @@ public class FilesScraper {
 	public void setDirectory(File dir) {
 		single = new FileExplorer(dir);
 		hasDir = true;
+		((FileExplorer) single).start();
 		findFiles();
 	}
 
 	/**
 	 * @return Quantidade total de arquivos
 	 */
-	public int getFileAmount() {
+	public long getFileAmount() {
 		if (hasDir)
 			return ((FileExplorer) single).getFileAmount();
 		return 0;
@@ -72,8 +55,9 @@ public class FilesScraper {
 	 *            < 1)
 	 */
 	public void setThreadAmount(int quantity) {
+		qtd = quantity;
 		try {
-			pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(quantity);
+			pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(qtd);
 			pool.prestartAllCoreThreads();
 		} catch (Exception e) {
 			resetarPool();
@@ -90,11 +74,23 @@ public class FilesScraper {
 	/**
 	 * @return Se todos os arquivos foram lidos
 	 */
-	public boolean hasFinished() {
+	public boolean hasFinishedCounting() {
 		return getThreadsFinishedAmount() == getFileAmount();
 		// se o numero de threads que acabaram é o número total de threads
 	}
+	
+	/**
+	 * @return Se a contagem de arquivos foi concluída
+	 */
+	public boolean hasFinishedScraping() {
+		if (single == null)
+			return false;
+		return ((FileExplorer) single).hasFinished();
+	}
 
+	/**
+	 * @return A quantidade de arquivos processados
+	 */
 	public long getThreadsFinishedAmount() {
 		return pool.getCompletedTaskCount();
 	}
@@ -106,6 +102,13 @@ public class FilesScraper {
 		if (!hasDir())
 			return;
 
+		if (pool.getCompletedTaskCount() != 0)
+			setThreadAmount(qtd);
+		
+		tempoFinal = -1;
+			
+		tempoInicial = System.currentTimeMillis();
+		
 		for (WordScrap w : arquivosLidos)
 			pool.submit(w);
 
@@ -113,16 +116,43 @@ public class FilesScraper {
 		finaliza.execute(new Runnable() {
 			@Override
 			public void run() {
-				while (!hasFinished()) {
+				while (!hasFinishedCounting()) {
 					// TODO ver se essa bagaça funciona
 				}
 				pool.shutdown();
+				tempoFinal = System.currentTimeMillis();
 			}
 		});
 
-		for (String w : mapaPalavras.keySet())
-			// TODO remover syso
-			System.out.println(w + " " + mapaPalavras.get(w));
+		generateMessage();
+	}
+
+	/**
+	 * @return O resultado da contagem em texto
+	 */
+	public String generateMessage() {
+		synchronized (mapaPalavras) {
+			int pos = 0;
+			String message = "";
+			for (String w : mapaPalavras.keySet()) {
+				if (pos == RESULTADOS_POR_LINHA) {
+					message = message.concat("\n");
+					pos = 0;
+				}
+				message = message.concat(w + " " + mapaPalavras.get(w) + "\t");
+				pos++;
+			}
+			return message;
+		}
+	}
+	
+	/**
+	 * @return O tempo (em milisegundos) gasto na contagem 
+	 */
+	public long getTimeSpent() {
+		if (tempoFinal == -1)
+			return 0;
+		return tempoFinal - tempoInicial;
 	}
 
 	private void findFiles() {
