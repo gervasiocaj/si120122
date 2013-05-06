@@ -148,14 +148,16 @@ public class MainWindow {
 
 	private void directoryAction() {
 		disableButtons();
+		textArea.setText("Analisando pastas...");
 
 		scrapeDirsWithThreads();
 		
 		
-		while (!fs.hasFinishedScraping()){}
+		while (!fs.hasFinishedScraping())
 			updateFrame();
 
 		enableButtons();
+		textArea.append("Terminado.");
 	}
 
 	private void analisisAction() {

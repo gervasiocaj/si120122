@@ -102,11 +102,14 @@ public class FilesScraper {
 		if (!hasDir())
 			return;
 
+		while (!hasFinishedScraping() || single.hasNext()) {}
+		
 		if (pool.getCompletedTaskCount() != 0)
 			setThreadAmount(qtd);
 		
 		tempoFinal = -1;
 		tempoInicial = System.currentTimeMillis();
+		
 		
 		for (WordScrap w : arquivosLidos)
 			pool.submit(w);

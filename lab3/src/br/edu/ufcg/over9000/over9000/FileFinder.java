@@ -16,7 +16,6 @@ public class FileFinder implements Iterator<File> {
 		this.files = new LinkedList<File>();
 		this.dir = directory;
 		this.position = -1;
-		finished = true;
 	}
 	
 	public boolean hasFinished() {
@@ -35,6 +34,9 @@ public class FileFinder implements Iterator<File> {
 				System.err.println("Erro ao acessar a pasta: " + arch.getAbsolutePath());
 			}
 		}
+		
+		if (arch.equals(dir))
+			finished = true;
 	}
 
 	public int getFileAmount() {
