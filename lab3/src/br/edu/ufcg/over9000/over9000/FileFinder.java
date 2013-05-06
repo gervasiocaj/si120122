@@ -4,15 +4,15 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class FileExplorer implements Iterator<File> {
+public class FileFinder implements Iterator<File> {
 
-	private LinkedList<File> files;
+	private volatile LinkedList<File> files;
 	private int position;
 	private final String DESIRED_EXTENSION = ".java";
 	private final File dir;
-	private boolean finished = false;
+	private volatile boolean finished = false;
 
-	public FileExplorer(File directory) {
+	public FileFinder(File directory) {
 		this.files = new LinkedList<File>();
 		this.dir = directory;
 		this.position = -1;
@@ -24,14 +24,14 @@ public class FileExplorer implements Iterator<File> {
 	}
 
 	private void explore(File arch) {
-		if (arch.isFile()) {
+		if (arch.isFile()) { // arquivo
 			if (arch.getAbsolutePath().endsWith(DESIRED_EXTENSION))
 				files.add(arch);
-		} else {
+		} else { // pasta
 			try {
 				for (File f : arch.listFiles())
 					explore(f);
-			} catch (Exception e) {
+			} catch (Exception e) { // no listFiles
 				System.err.println("Erro ao acessar a pasta: " + arch.getAbsolutePath());
 			}
 		}

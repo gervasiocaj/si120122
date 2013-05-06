@@ -12,11 +12,11 @@ import br.edu.ufcg.over9000.util.Constants;
 public class FilesScraper {
 
 	private static final int RESULTADOS_POR_LINHA = 4;
-	private static Iterator<File> single;
-	private static ThreadPoolExecutor pool;
-	private static boolean hasDir = false;
+	private static volatile Iterator<File> single;
+	private static volatile ThreadPoolExecutor pool;
+	private static volatile boolean hasDir = false;
 	private static Map<String, Integer> mapaPalavras;
-	private static List<WordScrap> arquivosLidos;
+	private static volatile List<WordScrap> arquivosLidos;
 	private long tempoInicial, tempoFinal = -1;
 	private int qtd;
 
@@ -34,9 +34,9 @@ public class FilesScraper {
 	 *            - O diretório desejado
 	 */
 	public void setDirectory(File dir) {
-		single = new FileExplorer(dir);
+		single = new FileFinder(dir);
 		hasDir = true;
-		((FileExplorer) single).start();
+		((FileFinder) single).start();
 		findFiles();
 	}
 
@@ -45,7 +45,7 @@ public class FilesScraper {
 	 */
 	public long getFileAmount() {
 		if (hasDir)
-			return ((FileExplorer) single).getFileAmount();
+			return ((FileFinder) single).getFileAmount();
 		return 0;
 	}
 
@@ -85,7 +85,7 @@ public class FilesScraper {
 	public boolean hasFinishedScraping() {
 		if (single == null)
 			return false;
-		return ((FileExplorer) single).hasFinished();
+		return ((FileFinder) single).hasFinished();
 	}
 
 	/**
@@ -106,12 +106,19 @@ public class FilesScraper {
 			setThreadAmount(qtd);
 		
 		tempoFinal = -1;
-			
 		tempoInicial = System.currentTimeMillis();
 		
 		for (WordScrap w : arquivosLidos)
 			pool.submit(w);
 
+		finalizaPool();
+		
+		tempoFinal = System.currentTimeMillis();
+
+		generateMessage();
+	}
+
+	private void finalizaPool() {
 		ExecutorService finaliza = Executors.newSingleThreadExecutor();
 		finaliza.execute(new Runnable() {
 			@Override
@@ -120,11 +127,8 @@ public class FilesScraper {
 					// TODO ver se essa bagaça funciona
 				}
 				pool.shutdown();
-				tempoFinal = System.currentTimeMillis();
 			}
 		});
-
-		generateMessage();
 	}
 
 	/**
@@ -156,15 +160,13 @@ public class FilesScraper {
 	}
 
 	private void findFiles() {
-		while (single.hasNext()) {
+		while (single.hasNext())
 			arquivosLidos.add(new WordScrap(single.next(), mapaPalavras));
-		}
 	}
 
 	protected void resetarMapa(Map<String, Integer> mapaPalavras) {
-		for (String word : Constants.RESERVED_WORDS) {
+		for (String word : Constants.RESERVED_WORDS)
 			mapaPalavras.put(word, 0);
-		}
 	}
 
 	private void resetarPool() {

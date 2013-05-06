@@ -90,6 +90,7 @@ public class MainWindow {
 		spinner = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
 		choicePanel.add(spinner, "3, 4");
 		analizeButton = new JButton("Analisar");
+		analizeButton.setEnabled(false); // XXX disabled inicialmente
 		choicePanel.add(analizeButton, "3, 6");
 
 		// -----------------------------------------------------
@@ -145,30 +146,28 @@ public class MainWindow {
 
 	}
 
-	protected void directoryAction() {
-		updateFrame();
-		directoryButton.setEnabled(false);
-		
+	private void directoryAction() {
+		disableButtons();
+
 		scrapeDirsWithThreads();
 		
-		while (!fs.hasFinishedScraping())
+		
+		while (!fs.hasFinishedScraping()){}
 			updateFrame();
-		
-		directoryButton.setEnabled(true);
+
+		enableButtons();
 	}
-	
+
 	private void analisisAction() {
-		directoryButton.setEnabled(false);
-		analizeButton.setEnabled(false);
-		
+		disableButtons();
+
 		fs.setThreadAmount((int) spinner.getValue());
 		analizeWithThreads();
 		while (!fs.hasFinishedCounting())
 			updateFrame();
-		
+
 		textArea.setText(fs.generateMessage());
-		directoryButton.setEnabled(true);
-		analizeButton.setEnabled(true);
+		//enableButtons(); FIXME não dá pra analisar mais de uma vez, dá um erro na pool
 	}
 
 	private void scrapeDirsWithThreads() {
@@ -189,19 +188,35 @@ public class MainWindow {
 		});
 	}
 
-	private void updateFrame() {
-		try {
-			Thread.sleep(50);
-		} catch (InterruptedException e) {}
-		labelChosenDir.setText(getHeaderText());
-		//analizeButton.setEnabled(fs.hasDir());
-		fileStatus.setText(getFooterText());
+	private void enableButtons() {
+		directoryButton.setEnabled(true);
+		analizeButton.setEnabled(true);
 		mainFrame.repaint();
+	}
+
+	private void disableButtons() {
+		directoryButton.setEnabled(false);
+		analizeButton.setEnabled(false);
+		mainFrame.repaint();
+	}
+
+	private void updateFrame() {
+		mainFrame.repaint();
+
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+		}
+
+		labelChosenDir.setText(getHeaderText());
+		// analizeButton.setEnabled(fs.hasDir());
+		fileStatus.setText(getFooterText());
 	}
 
 	private String getHeaderText() {
 		return "Diretório escolhido: "
-				+ (fs.hasDir() ? dirChooser.getSelectedFile().getAbsolutePath() : " - ");
+				+ (fs.hasDir() ? dirChooser.getSelectedFile().getAbsolutePath()
+						: " - ");
 	}
 
 	private String getFooterText() {
