@@ -191,7 +191,7 @@ public class MainWindow {
 
 	private void updateFrame() {
 		try {
-			Thread.sleep(500);
+			Thread.sleep(50);
 		} catch (InterruptedException e) {}
 		labelChosenDir.setText(getHeaderText());
 		//analizeButton.setEnabled(fs.hasDir());
